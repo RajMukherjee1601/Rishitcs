@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Delivery Update • PMS</title>
+  <link rel="stylesheet" href="../assets/styles.css" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="container">
+      <nav class="nav">
+        <a href="../pages/login.html" data-page="login">Login</a>
+        <a href="../pages/register.html" data-page="register" data-role-only="customer">Register</a>
+
+        <a href="../pages/customer-home.html" data-page="customer-home" data-role-only="customer">Home (Customer)</a>
+        <a href="../pages/officer-home.html" data-page="officer-home" data-role-only="officer">Home (Officer)</a>
+
+        <a href="../pages/booking-customer.html" data-page="booking-customer" data-role-only="customer">Booking Service</a>
+        <a href="../pages/booking-officer.html" data-page="booking-officer" data-role-only="officer">Booking Service</a>
+
+        <a href="../pages/tracking-customer.html" data-page="tracking-customer" data-role-only="customer">Tracking</a>
+        <a href="../pages/tracking-officer.html" data-page="tracking-officer" data-role-only="officer">Tracking</a>
+
+        <a href="../pages/booking-history-customer.html" data-page="history-customer" data-role-only="customer">Previous Booking</a>
+        <a href="../pages/booking-history-officer.html" data-page="history-officer" data-role-only="officer">Booking History</a>
+
+        <a href="../pages/pickup-scheduling.html" data-page="pickup" data-role-only="officer">Pickup Scheduling</a>
+        <a href="../pages/delivery-update.html" data-page="delivery" data-role-only="officer">Delivery Update</a>
+
+        <a href="../pages/support.html" data-page="support">Contact Support</a>
+
+        <div class="right">
+          <span id="welcomeUser" class="muted"></span>
+          <button id="logoutBtn" class="btn-secondary">Logout</button>
+        </div>
+      </nav>
+    </div>
+  </div>
+
+  <main class="container grid">
+    <div id="alertHost"></div>
+    
+<section class="card">
+  <h1>Delivery Update (Officer)</h1>
+  <p class="muted">Search Booking ID and update status: Picked up, In Transit, Delivered, Returned.</p>
+  <hr />
+
+  <div class="form-grid">
+    <div>
+      <label class="muted">Booking ID</label><br />
+      <input id="bid" maxlength="12" inputmode="numeric" placeholder="12 digit booking id" />
+    </div>
+    <div>
+      <label class="muted">Status</label><br />
+      <select id="status">
+        <option>Picked up</option>
+        <option>In Transit</option>
+        <option>Delivered</option>
+        <option>Returned</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="row" style="margin-top:10px">
+    <button id="updateBtn" class="btn">Update</button>
+  </div>
+
+  <div id="info" style="margin-top:14px"></div>
+</section>
+
+    <div class="footer">Parcel Management System UI • HTML/CSS/JS (localStorage demo)</div>
+  </main>
+
+  <script src="../assets/app.js"></script>
+  <script>
+    ensureSeed();
+    const __page = "delivery";
+    // login/register don't require auth
+    if(!["login","register"].includes(__page)) {
+      requireAuth();
+    }
+    setupNav(__page);
+  </script>
+  
+<script>
+  const s = requireAuth();
+  if(s?.role !== "officer") location.href = "../pages/customer-home.html";
+
+  const info = document.getElementById("info");
+
+  document.getElementById("updateBtn").addEventListener("click", ()=>{
+    const bid = document.getElementById("bid").value.trim();
+    const st = document.getElementById("status").value;
+
+    if(!/^[0-9]{12}$/.test(bid)) return toast("Booking ID must be 12 digits.", "danger");
+
+    const all = bookings();
+    const idx = all.findIndex(x => x.bookingId === bid);
+    if(idx < 0) return toast("Booking not found.", "danger");
+
+    all[idx].status = st;
+    saveBookings(all);
+
+    toast("Delivery status updated.", "ok");
+    info.innerHTML = `
+      <div class="card" style="padding:14px">
+        <div class="spread">
+          <span class="badge">Booking ID: <b>${escapeHtml(bid)}</b></span>
+          <span class="badge ${st==='Delivered'?'ok':(st==='Returned'?'danger':'warn')}">${escapeHtml(st)}</span>
+        </div>
+      </div>
+    `;
+  });
+</script>
+
+</body>
+</html>

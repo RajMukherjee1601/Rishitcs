@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Booking Service (Customer) • PMS</title>
+  <link rel="stylesheet" href="../assets/styles.css" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="container">
+      <nav class="nav">
+        <a href="../pages/login.html" data-page="login">Login</a>
+        <a href="../pages/register.html" data-page="register" data-role-only="customer">Register</a>
+
+        <a href="../pages/customer-home.html" data-page="customer-home" data-role-only="customer">Home (Customer)</a>
+        <a href="../pages/officer-home.html" data-page="officer-home" data-role-only="officer">Home (Officer)</a>
+
+        <a href="../pages/booking-customer.html" data-page="booking-customer" data-role-only="customer">Booking Service</a>
+        <a href="../pages/booking-officer.html" data-page="booking-officer" data-role-only="officer">Booking Service</a>
+
+        <a href="../pages/tracking-customer.html" data-page="tracking-customer" data-role-only="customer">Tracking</a>
+        <a href="../pages/tracking-officer.html" data-page="tracking-officer" data-role-only="officer">Tracking</a>
+
+        <a href="../pages/booking-history-customer.html" data-page="history-customer" data-role-only="customer">Previous Booking</a>
+        <a href="../pages/booking-history-officer.html" data-page="history-officer" data-role-only="officer">Booking History</a>
+
+        <a href="../pages/pickup-scheduling.html" data-page="pickup" data-role-only="officer">Pickup Scheduling</a>
+        <a href="../pages/delivery-update.html" data-page="delivery" data-role-only="officer">Delivery Update</a>
+
+        <a href="../pages/support.html" data-page="support">Contact Support</a>
+
+        <div class="right">
+          <span id="welcomeUser" class="muted"></span>
+          <button id="logoutBtn" class="btn-secondary">Logout</button>
+        </div>
+      </nav>
+    </div>
+  </div>
+
+  <main class="container grid">
+    <div id="alertHost"></div>
+    
+<section class="card">
+  <div class="spread">
+    <div>
+      <h1>Booking Service (Customer)</h1>
+      <p class="muted">Sender info is pre-populated (read only). Fill receiver + parcel + shipping options.</p>
+    </div>
+    <span class="badge">Validations + cost calc included</span>
+  </div>
+  <hr />
+
+  <form id="bookingForm" class="grid">
+    <div class="card" style="padding:14px">
+      <h2>1) Sender Information</h2>
+      <div class="form-grid">
+        <div>
+          <label class="muted">Name</label><br />
+          <input id="sName" readonly required />
+        </div>
+        <div>
+          <label class="muted">Contact details</label><br />
+          <input id="sPhone" readonly required />
+        </div>
+        <div style="grid-column:1/-1">
+          <label class="muted">Address</label><br />
+          <textarea id="sAddr" readonly required></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="padding:14px">
+      <h2>2) Receiver Information</h2>
+      <div class="form-grid">
+        <div>
+          <label class="muted">Name</label><br />
+          <input id="rName" required />
+        </div>
+        <div>
+          <label class="muted">Contact details</label><br />
+          <input id="rPhone" placeholder="+91 9xxxxxxxxx" required />
+        </div>
+        <div>
+          <label class="muted">Pin Code</label><br />
+          <input id="rPin" inputmode="numeric" maxlength="6" placeholder="6 digits" required />
+        </div>
+        <div style="grid-column:1/-1">
+          <label class="muted">Address</label><br />
+          <textarea id="rAddr" required></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="padding:14px">
+      <h2>3) Parcel Details</h2>
+      <div class="form-grid">
+        <div>
+          <label class="muted">Weight (kg)</label><br />
+          <input id="pWeight" type="number" step="0.01" min="0.01" required />
+        </div>
+        <div>
+          <label class="muted">Size</label><br />
+          <select id="pSize">
+            <option value="small">Small</option>
+            <option value="medium" selected>Medium</option>
+            <option value="large">Large</option>
+          </select>
+        </div>
+        <div style="grid-column:1/-1">
+          <label class="muted">Contents description</label><br />
+          <textarea id="pDesc" placeholder="For tracking and safety" required></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="padding:14px">
+      <h2>4) Shipping Options</h2>
+      <div class="form-grid">
+        <div>
+          <label class="muted">Delivery speed</label><br />
+          <select id="shipSpeed">
+            <option value="standard" selected>Standard</option>
+            <option value="express">Express</option>
+          </select>
+        </div>
+        <div>
+          <label class="muted">Packaging preference</label><br />
+          <select id="packPref">
+            <option value="standard" selected>Standard Packaging</option>
+            <option value="custom">Custom Packaging</option>
+            <option value="eco">Eco-friendly Packaging</option>
+            <option value="fragile">Fragile Item handling</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="padding:14px">
+      <h2>5) Date and Time Selection</h2>
+      <div class="form-grid">
+        <div>
+          <label class="muted">Preferred pickup time</label><br />
+          <input id="pickupTime" type="datetime-local" required />
+        </div>
+        <div>
+          <label class="muted">Preferred drop-off time</label><br />
+          <input id="dropTime" type="datetime-local" required />
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="padding:14px">
+      <h2>6) Service Cost and Payment</h2>
+      <div class="form-grid">
+        <div>
+          <label class="muted">Payment method</label><br />
+          <select id="payMethod">
+            <option value="card" selected>Card</option>
+            <option value="upi">UPI</option>
+            <option value="cash">Cash</option>
+          </select>
+        </div>
+        <div>
+          <label class="muted">Estimated cost (₹)</label><br />
+          <input id="estCost" readonly />
+        </div>
+      </div>
+      <p class="muted" style="margin-top:8px">Cost is based on Parcel Weight, Delivery Speed, Packaging, Insurance.</p>
+    </div>
+
+    <div class="card" style="padding:14px">
+      <h2>7) Additional Services</h2>
+      <div class="row">
+        <label><input type="checkbox" id="insurance" /> Insurance option</label>
+        <label><input type="checkbox" id="trackingSvc" checked /> Tracking service</label>
+      </div>
+    </div>
+
+    <div class="row">
+      <button class="btn" type="submit">Proceed to Pay Bill</button>
+      <button class="btn-secondary" type="reset">Reset</button>
+      <a class="btn-secondary" href="../pages/customer-home.html">Back to Home</a>
+    </div>
+  </form>
+</section>
+
+    <div class="footer">Parcel Management System UI • HTML/CSS/JS (localStorage demo)</div>
+  </main>
+
+  <script src="../assets/app.js"></script>
+  <script>
+    ensureSeed();
+    const __page = "booking-customer";
+    // login/register don't require auth
+    if(!["login","register"].includes(__page)) {
+      requireAuth();
+    }
+    setupNav(__page);
+  </script>
+  
+<script>
+  const s = requireAuth();
+  if(s?.role !== "customer") location.href = "../pages/officer-home.html";
+
+  // Prepopulate sender from user profile
+  const u = findUser(s.userId);
+  if(u){
+    document.getElementById("sName").value = u.name || "";
+    document.getElementById("sPhone").value = u.phone || "";
+    document.getElementById("sAddr").value = u.address || "";
+  }
+
+  const costOut = document.getElementById("estCost");
+  function recompute(){
+    const w = parseFloat(document.getElementById("pWeight").value || "0");
+    const speed = document.getElementById("shipSpeed").value;
+    const pack = document.getElementById("packPref").value;
+    const ins = document.getElementById("insurance").checked;
+    const c = calcCost(w, speed, pack, ins);
+    costOut.value = isFinite(c) ? c : "";
+  }
+  ["pWeight","shipSpeed","packPref","insurance"].forEach(id=>{
+    document.getElementById(id).addEventListener("input", recompute);
+    document.getElementById(id).addEventListener("change", recompute);
+  });
+
+  document.getElementById("bookingForm").addEventListener("submit",(e)=>{
+    e.preventDefault();
+    // Basic validations
+    const rPin = document.getElementById("rPin").value.trim();
+    if(!/^[0-9]{6}$/.test(rPin)) return toast("Receiver Pin Code must be 6 digits.", "danger");
+
+    const pickup = document.getElementById("pickupTime").value;
+    const drop = document.getElementById("dropTime").value;
+    if(!pickup || !drop) return toast("Pickup and Drop-off times are required.", "danger");
+    if(new Date(drop) <= new Date(pickup)) return toast("Drop-off time must be after pickup time.", "danger");
+
+    // Save a draft booking to session (paid later)
+    const draft = collectBookingDraft(s.userId);
+    save("pms_current_booking_draft_v1", draft);
+    location.href = "../pages/payment.html";
+  });
+
+  function collectBookingDraft(customerId){
+    const w = parseFloat(document.getElementById("pWeight").value || "0");
+    const speed = document.getElementById("shipSpeed").value;
+    const pack = document.getElementById("packPref").value;
+    const ins = document.getElementById("insurance").checked;
+    const cost = calcCost(w, speed, pack, ins);
+
+    return {
+      createdByRole: "customer",
+      customerId,
+      sender:{
+        name: document.getElementById("sName").value.trim(),
+        phone: document.getElementById("sPhone").value.trim(),
+        address: document.getElementById("sAddr").value.trim()
+      },
+      receiver:{
+        name: document.getElementById("rName").value.trim(),
+        phone: document.getElementById("rPhone").value.trim(),
+        pin: document.getElementById("rPin").value.trim(),
+        address: document.getElementById("rAddr").value.trim()
+      },
+      parcel:{
+        weightKg: w,
+        size: document.getElementById("pSize").value,
+        description: document.getElementById("pDesc").value.trim()
+      },
+      shipping:{
+        speed,
+        packaging: pack,
+        pickupTime: document.getElementById("pickupTime").value,
+        dropoffTime: document.getElementById("dropTime").value
+      },
+      services:{
+        insurance: ins,
+        tracking: document.getElementById("trackingSvc").checked
+      },
+      payment:{
+        method: document.getElementById("payMethod").value,
+        amount: cost
+      }
+    };
+  }
+</script>
+
+</body>
+</html>

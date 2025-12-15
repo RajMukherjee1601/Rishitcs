@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Officer Home • PMS</title>
+  <link rel="stylesheet" href="../assets/styles.css" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="container">
+      <nav class="nav">
+        <a href="../pages/login.html" data-page="login">Login</a>
+        <a href="../pages/register.html" data-page="register" data-role-only="customer">Register</a>
+
+        <a href="../pages/customer-home.html" data-page="customer-home" data-role-only="customer">Home (Customer)</a>
+        <a href="../pages/officer-home.html" data-page="officer-home" data-role-only="officer">Home (Officer)</a>
+
+        <a href="../pages/booking-customer.html" data-page="booking-customer" data-role-only="customer">Booking Service</a>
+        <a href="../pages/booking-officer.html" data-page="booking-officer" data-role-only="officer">Booking Service</a>
+
+        <a href="../pages/tracking-customer.html" data-page="tracking-customer" data-role-only="customer">Tracking</a>
+        <a href="../pages/tracking-officer.html" data-page="tracking-officer" data-role-only="officer">Tracking</a>
+
+        <a href="../pages/booking-history-customer.html" data-page="history-customer" data-role-only="customer">Previous Booking</a>
+        <a href="../pages/booking-history-officer.html" data-page="history-officer" data-role-only="officer">Booking History</a>
+
+        <a href="../pages/pickup-scheduling.html" data-page="pickup" data-role-only="officer">Pickup Scheduling</a>
+        <a href="../pages/delivery-update.html" data-page="delivery" data-role-only="officer">Delivery Update</a>
+
+        <a href="../pages/support.html" data-page="support">Contact Support</a>
+
+        <div class="right">
+          <span id="welcomeUser" class="muted"></span>
+          <button id="logoutBtn" class="btn-secondary">Logout</button>
+        </div>
+      </nav>
+    </div>
+  </div>
+
+  <main class="container grid">
+    <div id="alertHost"></div>
+    
+<section class="card">
+  <h1>Officer Home</h1>
+  <p class="muted">Officer options: Booking Service, Pickup Scheduling, Delivery Update, Tracking, Booking History, Logout.</p>
+  <hr />
+  <div class="grid">
+    <div class="card" style="padding:14px">
+      <h2>Quick actions</h2>
+      <div class="row">
+        <a class="btn" href="../pages/booking-officer.html">Create Booking (for a customer)</a>
+        <a class="btn-secondary" href="../pages/pickup-scheduling.html">Pickup Scheduling</a>
+        <a class="btn-secondary" href="../pages/delivery-update.html">Delivery Update</a>
+        <a class="btn-secondary" href="../pages/tracking-officer.html">Tracking</a>
+        <a class="btn-secondary" href="../pages/booking-history-officer.html">Booking History</a>
+      </div>
+    </div>
+
+    <div class="card" style="padding:14px">
+      <h2>Delivery status</h2>
+      <p class="muted">Officer can update package status by searching Booking ID: Picked up, In Transit, Delivered, Returned.</p>
+    </div>
+  </div>
+</section>
+
+    <div class="footer">Parcel Management System UI • HTML/CSS/JS (localStorage demo)</div>
+  </main>
+
+  <script src="../assets/app.js"></script>
+  <script>
+    ensureSeed();
+    const __page = "officer-home";
+    // login/register don't require auth
+    if(!["login","register"].includes(__page)) {
+      requireAuth();
+    }
+    setupNav(__page);
+  </script>
+  
+</body>
+</html>

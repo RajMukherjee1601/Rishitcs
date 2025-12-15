@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tracking (Officer) • PMS</title>
+  <link rel="stylesheet" href="../assets/styles.css" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="container">
+      <nav class="nav">
+        <a href="../pages/login.html" data-page="login">Login</a>
+        <a href="../pages/register.html" data-page="register" data-role-only="customer">Register</a>
+
+        <a href="../pages/customer-home.html" data-page="customer-home" data-role-only="customer">Home (Customer)</a>
+        <a href="../pages/officer-home.html" data-page="officer-home" data-role-only="officer">Home (Officer)</a>
+
+        <a href="../pages/booking-customer.html" data-page="booking-customer" data-role-only="customer">Booking Service</a>
+        <a href="../pages/booking-officer.html" data-page="booking-officer" data-role-only="officer">Booking Service</a>
+
+        <a href="../pages/tracking-customer.html" data-page="tracking-customer" data-role-only="customer">Tracking</a>
+        <a href="../pages/tracking-officer.html" data-page="tracking-officer" data-role-only="officer">Tracking</a>
+
+        <a href="../pages/booking-history-customer.html" data-page="history-customer" data-role-only="customer">Previous Booking</a>
+        <a href="../pages/booking-history-officer.html" data-page="history-officer" data-role-only="officer">Booking History</a>
+
+        <a href="../pages/pickup-scheduling.html" data-page="pickup" data-role-only="officer">Pickup Scheduling</a>
+        <a href="../pages/delivery-update.html" data-page="delivery" data-role-only="officer">Delivery Update</a>
+
+        <a href="../pages/support.html" data-page="support">Contact Support</a>
+
+        <div class="right">
+          <span id="welcomeUser" class="muted"></span>
+          <button id="logoutBtn" class="btn-secondary">Logout</button>
+        </div>
+      </nav>
+    </div>
+  </div>
+
+  <main class="container grid">
+    <div id="alertHost"></div>
+    
+<section class="card">
+  <h1>Tracking (Officer)</h1>
+  <p class="muted">List of shipped packages (latest first). Search by Customer ID and Booking ID.</p>
+  <hr />
+
+  <div class="form-grid">
+    <div>
+      <label class="muted">Customer ID</label><br />
+      <input id="cid" placeholder="customer01" />
+    </div>
+    <div>
+      <label class="muted">Booking ID</label><br />
+      <input id="bid" maxlength="12" inputmode="numeric" placeholder="12 digit booking id" />
+    </div>
+  </div>
+  <div class="row" style="margin-top:10px">
+    <button id="searchBtn" class="btn">Search</button>
+    <button id="resetBtn" class="btn-secondary">Reset</button>
+  </div>
+
+  <div id="listBox" style="margin-top:14px"></div>
+</section>
+
+    <div class="footer">Parcel Management System UI • HTML/CSS/JS (localStorage demo)</div>
+  </main>
+
+  <script src="../assets/app.js"></script>
+  <script>
+    ensureSeed();
+    const __page = "tracking-officer";
+    // login/register don't require auth
+    if(!["login","register"].includes(__page)) {
+      requireAuth();
+    }
+    setupNav(__page);
+  </script>
+  
+<script>
+  const s = requireAuth();
+  if(s?.role !== "officer") location.href = "../pages/tracking-customer.html";
+
+  const listBox = document.getElementById("listBox");
+
+  function render(list){
+    if(!list.length){
+      listBox.innerHTML = '<p class="muted">No bookings found.</p>';
+      return;
+    }
+    listBox.innerHTML = `
+      <div class="card" style="padding:0;overflow:auto">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Booking ID</th>
+              <th>Customer ID</th>
+              <th>Booking Date</th>
+              <th>Receiver</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${list.map(b=>`
+              <tr>
+                <td>${escapeHtml(b.bookingId)}</td>
+                <td>${escapeHtml(b.customerId || "-")}</td>
+                <td class="muted">${escapeHtml(new Date(b.bookingDate).toLocaleString())}</td>
+                <td>${escapeHtml(b.receiver.name)}</td>
+                <td><span class="badge ${b.status==='Delivered'?'ok':(b.status==='Returned'?'danger':'warn')}">${escapeHtml(b.status)}</span></td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  function currentList(){
+    return bookings().slice().sort((a,b)=> new Date(b.bookingDate)-new Date(a.bookingDate));
+  }
+
+  render(currentList());
+
+  document.getElementById("searchBtn").addEventListener("click", ()=>{
+    const cid = document.getElementById("cid").value.trim();
+    const bid = document.getElementById("bid").value.trim();
+    let list = currentList();
+
+    if(cid) list = list.filter(x => (x.customerId||"").toLowerCase() === cid.toLowerCase());
+    if(bid){
+      if(!/^[0-9]{12}$/.test(bid)) return toast("Booking ID must be 12 digits.", "danger");
+      list = list.filter(x => x.bookingId === bid);
+    }
+    render(list);
+  });
+
+  document.getElementById("resetBtn").addEventListener("click", ()=>{
+    document.getElementById("cid").value = "";
+    document.getElementById("bid").value = "";
+    render(currentList());
+  });
+</script>
+
+</body>
+</html>

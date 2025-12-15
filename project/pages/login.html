@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login • PMS</title>
+  <link rel="stylesheet" href="../assets/styles.css" />
+</head>
+<body>
+  <div class="topbar">
+  </div>
+
+  <main class="container grid">
+    <div id="alertHost"></div>
+    
+<section class="card">
+  <div class="spread">
+    <div>
+      <h1>Log In</h1>
+      <p class="muted">Customer / Officer login (User ID 5–20 chars, Password max 30 with Upper+Lower+Special).</p>
+    </div>
+    <span class="badge">Seed accounts: customer01 / Customer@123 • officer01 / Officer@123</span>
+  </div>
+  <hr />
+  <form id="loginForm" class="form-grid">
+    <div>
+      <label class="muted">Role</label><br />
+      <select id="role">
+        <option value="customer">Customer</option>
+        <option value="officer">Officer</option>
+      </select>
+    </div>
+    <div>
+      <label class="muted">User ID</label><br />
+      <input id="userId" placeholder="min 5, max 20" required />
+    </div>
+    <div>
+      <label class="muted">Password</label><br />
+      <input id="password" type="password" placeholder="Upper + lower + special" required />
+    </div>
+    <div style="display:flex;gap:10px;align-items:end;flex-wrap:wrap">
+      <button class="btn" type="submit">Login</button>
+      <a class="btn-secondary" href="../pages/register.html">New customer? Register</a>
+    </div>
+  </form>
+</section>
+
+    <div class="footer">Parcel Management System UI • HTML/CSS/JS (localStorage demo)</div>
+  </main>
+
+  <script src="../assets/app.js"></script>
+  <script>
+    ensureSeed();
+    const __page = "login";
+    // login/register don't require auth
+    if(!["login","register"].includes(__page)) {
+      requireAuth();
+    }
+    setupNav(__page);
+  </script>
+  
+<script>
+  const form = document.getElementById("loginForm");
+  form.addEventListener("submit", (e)=>{
+    e.preventDefault();
+    const role = document.getElementById("role").value;
+    const userId = document.getElementById("userId").value.trim();
+    const pw = document.getElementById("password").value;
+
+    if(!userIdValid(userId)) return toast("User ID must be 5 to 20 characters.", "danger");
+    if(!passwordValid(pw)) return toast("Password must be <=30 chars and include upper, lower, and special character.", "danger");
+
+    const res = loginUser(role, userId, pw);
+    if(!res.ok) return toast(res.msg, "danger");
+
+    if(role === "customer") location.href = "../pages/customer-home.html";
+    else location.href = "../pages/officer-home.html";
+  });
+</script>
+
+</body>
+</html>

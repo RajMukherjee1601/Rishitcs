@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Register • PMS</title>
+  <link rel="stylesheet" href="../assets/styles.css" />
+</head>
+<body>
+
+  <main class="container grid">
+    <div id="alertHost"></div>
+    
+<section class="card">
+  <h1>Customer Registration</h1>
+  <p class="muted">Enter personal information + username/password + preferences.</p>
+  <hr />
+  <form id="regForm" class="grid">
+    <div class="card" style="padding:14px">
+      <h2>1) Personal Information</h2>
+      <div class="form-grid">
+        <div>
+          <label class="muted">Customer Name (max 50)</label><br />
+          <input id="name" maxlength="50" required />
+        </div>
+        <div>
+          <label class="muted">Email</label><br />
+          <input id="email" type="email" required />
+        </div>
+        <div>
+          <label class="muted">Mobile number</label><br />
+          <div class="row">
+            <select id="countryCode" style="min-width:120px">
+              <option value="+91">+91</option>
+              <option value="+1">+1</option>
+              <option value="+44">+44</option>
+              <option value="+61">+61</option>
+            </select>
+            <input id="phone" inputmode="numeric" placeholder="10 digit number" maxlength="10" required />
+          </div>
+        </div>
+        <div>
+          <label class="muted">Address (include ZIP)</label><br />
+          <textarea id="address" placeholder="Full mailing address, ZIP code, parcel code" required></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="padding:14px">
+      <h2>2) Username and Password</h2>
+      <div class="form-grid">
+        <div>
+          <label class="muted">User ID (min 5 max 20)</label><br />
+          <input id="userId" required />
+        </div>
+        <div>
+          <label class="muted">Password (max 30)</label><br />
+          <input id="pw" type="password" required />
+        </div>
+        <div>
+          <label class="muted">Confirm Password</label><br />
+          <input id="pw2" type="password" required />
+        </div>
+      </div>
+      <p class="muted" style="margin-top:8px">Password rule: at least 1 uppercase, 1 lowercase, 1 special character.</p>
+    </div>
+
+    <div class="card" style="padding:14px">
+      <h2>3) Preferences</h2>
+      <textarea id="prefs" placeholder="Delivery preferences, notifications, etc."></textarea>
+    </div>
+
+    <div class="row">
+      <button class="btn" type="submit">Register</button>
+      <button class="btn-secondary" type="reset">Reset</button>
+      <a class="btn-secondary" href="../pages/login.html">Back to Login</a>
+    </div>
+
+    <div id="ack" class="card" style="display:none;border-color:rgba(34,197,94,.35)"></div>
+  </form>
+</section>
+
+    <div class="footer">Parcel Management System UI • HTML/CSS/JS (localStorage demo)</div>
+  </main>
+
+  <script src="../assets/app.js"></script>
+  <script>
+    ensureSeed();
+    const __page = "register";
+    // login/register don't require auth
+    if(!["login","register"].includes(__page)) {
+      requireAuth();
+    }
+    setupNav(__page);
+  </script>
+  
+<script>
+  const form = document.getElementById("regForm");
+  const ack = document.getElementById("ack");
+
+  form.addEventListener("submit", (e)=>{
+    e.preventDefault();
+
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const cc = document.getElementById("countryCode").value;
+    const phone = document.getElementById("phone").value.trim();
+    const address = document.getElementById("address").value.trim();
+    const userId = document.getElementById("userId").value.trim();
+    const pw = document.getElementById("pw").value;
+    const pw2 = document.getElementById("pw2").value;
+    const prefs = document.getElementById("prefs").value.trim();
+
+    if(!name) return toast("Customer Name is required.", "danger");
+    if(phone.length !== 10 || !/^[0-9]{10}$/.test(phone)) return toast("Mobile number must be 10 digits.", "danger");
+    if(!userIdValid(userId)) return toast("User ID must be 5 to 20 characters.", "danger");
+    if(!passwordValid(pw)) return toast("Password must be <=30 chars and include upper, lower, special.", "danger");
+    if(pw !== pw2) return toast("Password and Confirm Password do not match.", "danger");
+
+    const res = createUser({
+      role:"customer",
+      userId, password:pw,
+      name, email,
+      phone: `${cc} ${phone}`,
+      address,
+      preferences:prefs
+    });
+
+    if(!res.ok) return toast(res.msg, "danger");
+
+    // Acknowledgment
+    ack.style.display = "block";
+    ack.innerHTML = `
+      <div class="alert ok"><b>Consumer Registration successful.</b></div>
+      <div class="kv" style="margin-top:10px">
+        <div>Customer username</div><div>${escapeHtml(userId)}</div>
+        <div>Customer Name</div><div>${escapeHtml(name)}</div>
+        <div>Email</div><div>${escapeHtml(email)}</div>
+      </div>
+      <div class="row" style="margin-top:12px">
+        <a class="btn" href="../pages/login.html">Go to Login</a>
+      </div>
+    `;
+    toast("Registration successful.", "ok");
+    form.reset();
+  });
+</script>
+
+</body>
+</html>
