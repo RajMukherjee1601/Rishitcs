@@ -4,46 +4,393 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login • PMS</title>
-  <link rel="stylesheet" href="../assets/styles.css" />
-</head>
-<body>
-  <div class="topbar">
-  </div>
 
-  <main class="container grid">
+  <!-- Keep your existing global stylesheet -->
+  <link rel="stylesheet" href="../assets/styles.css" />
+
+  <!-- Page-specific professional styling (overrides + enhances) -->
+  <style>
+    :root{
+  --text: #0f172a;
+  --muted: #64748b;
+  --border: rgba(15, 23, 42, 0.10);
+  --shadow: 0 22px 60px rgba(2, 6, 23, 0.12);
+  --shadow2: 0 10px 30px rgba(2, 6, 23, 0.10);
+
+  /* ✅ Blue theme */       /* blue-600 */
+  --primary-700: #1d4ed8;    /* blue-700 */
+  --primary-soft: rgba(37, 99, 235, 0.12);
+  --ring: 0 0 0 4px rgba(37, 99, 235, 0.16);
+
+  --radius: 18px;
+  --radius-sm: 12px;
+
+  --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+}
+
+*{ box-sizing: border-box; }
+
+body{
+  margin: 0;
+  font-family: var(--font);
+  color: var(--text);
+  background:
+    radial-gradient(900px 400px at 10% 0%, rgba(37, 99, 235, 0.10), transparent 60%),
+    radial-gradient(900px 450px at 90% 10%, rgba(2, 132, 199, 0.10), transparent 55%),
+    var(--bg);
+  min-height: 100vh;
+}
+
+/* Topbar: keep compatible with setupNav() */
+.topbar{
+  min-height: 64px;
+  display:flex;
+  align-items:center;
+  border-bottom: 1px solid var(--border);
+  -webkit-backdrop-filter: blur(10px);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+/* Layout container */
+.container{
+  width: min(1120px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 28px 0 22px;
+}
+
+/* Alert host spacing */
+#alertHost{
+  margin: 0 0 14px;
+}
+
+/* Shell */
+.auth-shell{
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  border: 1px solid var(--border);
+  background: var(--card);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+/* Left visual panel */
+.auth-visual{
+  position: relative;
+  padding: 34px 34px 28px;
+  color: #fff;
+  background:
+
+}
+
+.auth-visual:before{
+  content:"";
+  position:absolute;
+  inset:-2px;
+  background:
+    radial-gradient(420px 240px at 18% 22%, rgba(37,99,235,0.55), transparent 62%), /* ✅ blue */
+    radial-gradient(420px 240px at 72% 42%, rgba(2,132,199,0.55), transparent 62%),
+    radial-gradient(420px 240px at 45% 95%, rgba(16,185,129,0.35), transparent 65%);
+  opacity: 0.55;
+  pointer-events:none;
+}
+.auth-visual > *{ position: relative; }
+
+.brand-row{
+  display:flex;
+  align-items:center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.brand-mark{
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--primary), #60a5fa);
+  box-shadow: 0 12px 30px rgba(37,99,235,0.35);
+  display:grid;
+  place-items:center;
+  font-weight: 800;
+  letter-spacing: .5px;
+}
+
+.brand-title{
+  display:flex;
+  flex-direction:column;
+  line-height: 1.1;
+}
+.brand-title strong{ font-size: 15px; letter-spacing: .2px; }
+.brand-title span{ font-size: 12px; opacity: .78; }
+
+.auth-visual h2{
+  margin: 10px 0 10px;
+  font-size: 28px;
+  line-height: 1.15;
+  letter-spacing: -0.3px;
+}
+.auth-visual p{
+  margin: 0 0 18px;
+  font-size: 14px;
+  opacity: 0.86;
+  max-width: 48ch;
+}
+
+.feature-list{
+  display:grid;
+  gap: 10px;
+  margin: 18px 0 22px;
+  padding: 0;
+  list-style: none;
+}
+.feature-list li{
+  display:flex;
+  gap: 10px;
+  align-items:flex-start;
+  font-size: 14px;
+  opacity: 0.92;
+}
+.dot{
+  width: 10px; height: 10px;
+  border-radius: 99px;
+  background: rgba(255,255,255,0.9);
+  margin-top: 6px;
+  flex: 0 0 auto;
+}
+
+.demo-pill{
+  margin-top: 18px;
+  display:inline-flex;
+  gap: 10px;
+  align-items:center;
+  padding: 10px 12px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.18);
+  font-size: 12.5px;
+  line-height: 1.25;
+  max-width: 100%;
+}
+.demo-pill code{
+  color: #fff;
+  background: rgba(0,0,0,0.22);
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+  font-size: 12px;
+}
+
+/* Right form panel */
+.auth-form{
+  padding: 34px 34px 28px;
+  background: linear-gradient(180deg, #fff, #fff 60%, #fbfbfe);
+}
+
+.auth-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+.auth-head h1{
+  margin: 0;
+  font-size: 26px;
+  letter-spacing: -0.3px;
+}
+
+.muted{
+  color: var(--muted);
+  font-size: 13px;
+  margin-top: 6px;
+  line-height: 1.35;
+}
+
+.divider{
+  height: 1px;
+  background: var(--border);
+  margin: 16px 0 18px;
+}
+
+.form-grid{
+  display:grid;
+  gap: 14px;
+}
+
+label{
+  display:block;
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 8px;
+  letter-spacing: .2px;
+}
+
+input, select{
+  width: 100%;
+  height: 44px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--text);
+  outline: none;
+  transition: box-shadow .15s ease, border-color .15s ease, transform .08s ease;
+  box-shadow: 0 1px 0 rgba(2,6,23,0.03);
+}
+input::placeholder{ color: rgba(100,116,139,0.75); }
+
+input:focus, select:focus{
+  border-color: rgba(37,99,235,0.55);
+  box-shadow: var(--ring);
+}
+input:active, select:active{ transform: translateY(1px); }
+
+.actions{
+  display:flex;
+  gap: 10px;
+  align-items:center;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.btn{
+  height: 44px;
+  padding: 0 16px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  background: linear-gradient(135deg, var(--primary), #60a5fa);
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: .2px;
+  cursor: pointer;
+  box-shadow: 0 14px 34px rgba(37,99,235,0.22);
+  transition: transform .08s ease, filter .15s ease, box-shadow .15s ease;
+}
+.btn:hover{ filter: brightness(1.02); }
+.btn:active{ transform: translateY(1px); box-shadow: 0 10px 25px rgba(37,99,235,0.18); }
+
+.btn-secondary{
+  height: 44px;
+  padding: 0 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--text);
+  text-decoration: none;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-weight: 600;
+  transition: box-shadow .15s ease, transform .08s ease, border-color .15s ease;
+  box-shadow: var(--shadow2);
+}
+.btn-secondary:hover{
+  border-color: rgba(37,99,235,0.35);
+  box-shadow: 0 14px 30px rgba(2,6,23,0.10);
+}
+.btn-secondary:active{ transform: translateY(1px); }
+
+.footer{
+  margin-top: 14px;
+  color: rgba(100,116,139,0.9);
+  font-size: 12px;
+  text-align:center;
+}
+
+/* Responsive */
+@media (max-width: 920px){
+  .auth-shell{ grid-template-columns: 1fr; }
+  .auth-visual{ padding: 26px; }
+  .auth-form{ padding: 26px; }
+}
+@media (max-width: 480px){
+  .container{ width: calc(100% - 22px); }
+  .auth-visual h2{ font-size: 24px; }
+  .auth-head h1{ font-size: 22px; }
+  .actions .btn, .actions .btn-secondary{ width: 100%; }
+}
+
+  </style>
+</head>
+
+<body>
+  <!-- setupNav() can still populate this -->
+  <div class="topbar"></div>
+
+  <main class="container">
     <div id="alertHost"></div>
-    
-<section class="card">
-  <div class="spread">
-    <div>
-      <h1>Log In</h1>
-      <p class="muted">Customer / Officer login (User ID 5–20 chars, Password max 30 with Upper+Lower+Special).</p>
-    </div>
-    <span class="badge">Seed accounts: customer01 / Customer@123 • officer01 / Officer@123</span>
-  </div>
-  <hr />
-  <form id="loginForm" class="form-grid">
-    <div>
-      <label class="muted">Role</label><br />
-      <select id="role">
-        <option value="customer">Customer</option>
-        <option value="officer">Officer</option>
-      </select>
-    </div>
-    <div>
-      <label class="muted">User ID</label><br />
-      <input id="userId" placeholder="min 5, max 20" required />
-    </div>
-    <div>
-      <label class="muted">Password</label><br />
-      <input id="password" type="password" placeholder="Upper + lower + special" required />
-    </div>
-    <div style="display:flex;gap:10px;align-items:end;flex-wrap:wrap">
-      <button class="btn" type="submit">Login</button>
-      <a class="btn-secondary" href="../pages/register.html">New customer? Register</a>
-    </div>
-  </form>
-</section>
+
+    <section class="auth-shell" aria-label="Login">
+      <!-- Left visual / brand panel -->
+      <aside class="auth-visual">
+        <div class="brand-row">
+          <div class="brand-mark">P</div>
+          <div class="brand-title">
+            <strong>Parcel Management System</strong>
+            <span>Operations • Tracking • Support</span>
+          </div>
+        </div>
+
+        <h2>Manage shipments with confidence.</h2>
+        <p>
+          A clean, secure login experience for both customers and internal officers — built for speed and clarity.
+        </p>
+
+        <ul class="feature-list">
+          <li><span class="dot"></span><span>Quick access to booking, tracking, and delivery updates</span></li>
+          <li><span class="dot"></span><span>Role-based login for customers and branch/officer workflows</span></li>
+          <li><span class="dot"></span><span>Consistent UI across modules with alerts and validations</span></li>
+        </ul>
+
+        <div class="demo-pill" aria-label="Demo accounts">
+          Demo:
+          <code>customer01</code> <span> / </span> <code>Customer@123</code>
+          <span>•</span>
+          <code>officer01</code> <span> / </span> <code>Officer@123</code>
+        </div>
+      </aside>
+
+      <!-- Right form panel -->
+      <div class="auth-form">
+        <div class="auth-head">
+          <div>
+            <h1>Log In</h1>
+            <div class="muted">
+              Customer / Officer login (User ID 5–20 chars, Password max 30 with Upper + Lower + Special).
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <form id="loginForm" class="form-grid">
+          <div>
+            <label for="role">Role</label>
+            <select id="role">
+              <option value="customer">Customer</option>
+              <option value="officer">Officer</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="userId">User ID</label>
+            <input id="userId" placeholder="min 5, max 20" required />
+          </div>
+
+          <div>
+            <label for="password">Password</label>
+            <input id="password" type="password" placeholder="Upper + lower + special" required />
+          </div>
+
+          <div class="actions">
+            <button class="btn" type="submit">Login</button>
+            <a class="btn-secondary" href="../pages/register.html">New customer? Register</a>
+          </div>
+        </form>
+      </div>
+    </section>
 
     <div class="footer">Parcel Management System UI • HTML/CSS/JS (localStorage demo)</div>
   </main>
@@ -58,25 +405,24 @@
     }
     setupNav(__page);
   </script>
-  
-<script>
-  const form = document.getElementById("loginForm");
-  form.addEventListener("submit", (e)=>{
-    e.preventDefault();
-    const role = document.getElementById("role").value;
-    const userId = document.getElementById("userId").value.trim();
-    const pw = document.getElementById("password").value;
 
-    if(!userIdValid(userId)) return toast("User ID must be 5 to 20 characters.", "danger");
-    if(!passwordValid(pw)) return toast("Password must be <=30 chars and include upper, lower, and special character.", "danger");
+  <script>
+    const form = document.getElementById("loginForm");
+    form.addEventListener("submit", (e)=>{
+      e.preventDefault();
+      const role = document.getElementById("role").value;
+      const userId = document.getElementById("userId").value.trim();
+      const pw = document.getElementById("password").value;
 
-    const res = loginUser(role, userId, pw);
-    if(!res.ok) return toast(res.msg, "danger");
+      if(!userIdValid(userId)) return toast("User ID must be 5 to 20 characters.", "danger");
+      if(!passwordValid(pw)) return toast("Password must be <=30 chars and include upper, lower, and special character.", "danger");
 
-    if(role === "customer") location.href = "../pages/customer-home.html";
-    else location.href = "../pages/officer-home.html";
-  });
-</script>
+      const res = loginUser(role, userId, pw);
+      if(!res.ok) return toast(res.msg, "danger");
 
+      if(role === "customer") location.href = "../pages/customer-home.html";
+      else location.href = "../pages/officer-home.html";
+    });
+  </script>
 </body>
 </html>
